@@ -931,7 +931,8 @@ class_check(
             {
                 if (class_flag2 &&
                     (!(val & BRD_R_BIT) || !(brd[chn].brdname[0]) ||
-                    (brd[chn].readlevel & ~(PERM_SYSOP | PERM_BOARD)) ))
+                    !(brd[chn].readlevel) || (brd[chn].readlevel & ~(PERM_SYSOP | PERM_BOARD)) ))
+
                         continue;
 
                 if ((val & BRD_F_BIT) && !(val & zap))
@@ -946,7 +947,7 @@ class_check(
             // 即時熱門看板臨界值自定
             if (class_hot)
             {
-                if (bshm->mantime[chn] < CLASS_HOT) /* 只列出人氣超過 CLASS_HOT 的看板 */
+                if ( ( bshm->mantime[chn] < CLASS_HOT ) || ( !strcmp(brd[chn].brdname, "SYSOP") ) ) /* 只列出人氣超過 CLASS_HOT 的看板 */
                     continue;
                 bnum++;
             }
@@ -1026,7 +1027,7 @@ class_load(
             {
                 if (class_flag2 &&
                     (!(val & BRD_R_BIT) || !(brd[chn].brdname[0]) ||
-                    (brd[chn].readlevel & ~(PERM_SYSOP | PERM_BOARD)) ))
+                    !(brd[chn].readlevel) || (brd[chn].readlevel & ~(PERM_SYSOP | PERM_BOARD)) ))
                         continue;
 
                 if ((val & BRD_F_BIT) && !(val & zap))
@@ -1040,7 +1041,7 @@ class_load(
             // 即時熱門看板臨界值自定
             if (class_hot)
             {
-                if ( ( bshm->mantime[chn] < CLASS_HOT ) && ( !strcmp(brd[chn].brdname, "SYSOP") ) ) /* 只列出人氣超過 CLASS_HOT 的看板 */
+                if ( ( bshm->mantime[chn] < CLASS_HOT ) || ( !strcmp(brd[chn].brdname, "SYSOP") ) ) /* 只列出人氣超過 CLASS_HOT 的看板 */
                     continue;
                 bnum++;
             }
