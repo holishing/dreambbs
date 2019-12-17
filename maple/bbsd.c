@@ -490,14 +490,6 @@ logattempt(
         p->tm_year % 100, p->tm_mon + 1, p->tm_mday,
         p->tm_hour, p->tm_min, p->tm_sec, type, currtitle);
 
-#if 0
-    sprintf(buf, "%c%-12s[%s] %s\n", type, cuser.userid,
-        Etime(&ap_start), currtitle);
-    f_cat(FN_LOGIN_LOG, buf);
-#endif
-
-//  str_stamp(fpath, &ap_start);
-//  sprintf(buf, "%s %cBBS\t%s\n", fpath, type, currtitle);
     /* Thor.990415: currtitle已內含ip */
     /* sprintf(buf, "%s %cBBS\t%s ip:%08x\n", fpath, type, currtitle, tn_addr); */
     /* Thor.980803: 追蹤 ip address */
@@ -591,17 +583,6 @@ tn_login(void)
     /* sprintf(currtitle, "%s@%s", rusername, fromhost); */
     /* Thor.990415: 紀錄ip, 怕正查不到 */
     sprintf(currtitle, "%s@%s ip:%08lx (%d)", rusername, fromhost, tn_addr, currpid);
-
-
-/* by visor */
-#if 0
-    move(20, 0);
-    outs("關站中請見諒~~~~");
-    vkey();
-    sleep(10);
-    exit(0);
-#endif
-/* by visor */
 
     /* 081119.cache: 正常顯示進站畫面 */
     move(b_lines, 0);
@@ -980,14 +961,6 @@ tn_login(void)
             }
 #endif
 
-#if 0
-        if (ufo & UFO_MQUOTA)
-        {
-            bell();
-            more(FN_ETC_MQUOTA, NULL);
-        }
-#endif
-
         ve_recover();
 
 #ifdef LOGIN_NOTIFY
@@ -1020,11 +993,6 @@ tn_login(void)
 
     /* lkchu.990510: 重要公告放到 announce, 不跟 welcome 擠 :p */
     more(FN_ETC_ANNOUNCE, NULL);
-#if 0
-    bell();
-    sleep(1);
-    bell();
-#endif
 
     /* Thor.980917: 註解: 到此為止應該設定好 cuser. level? ufo? rusername bbstate cutmp cutmp-> */
 
@@ -1034,16 +1002,6 @@ tn_login(void)
         clear();
         pad_view();
     }
-
-#if 0
-    if (cuser.ufo2 & UFO2_APRIL1)
-    {
-        more(FN_APRIL_FIRST, NULL);
-        bell();
-        sleep(1);
-        bell();
-    }
-#endif
 
 /* 20100615.cache: 3000人以上會造成效能上的問題 */
 //#ifdef        HAVE_CLASSTABLEALERT
@@ -1128,16 +1086,9 @@ tn_main(void)
 
 
     clear();
-/*cache.080510: --維修用, 開站時要記得設定這段變成註解--*/
-/*cache.080714: power user 可以輸入busy開啟login畫面測試*/
-#if 0
-    more("gem/@/@close", (char *) -1);    /* 禁止上站畫面 */
-    move(b_lines -1, 0);
-    outs("請按任意鍵離開...");
-    if ( vkey() != 'c' || vkey() != 'c' || vkey() != 'n' || vkey() != 's' )
-        login_abort("已中斷連線");
-#endif
-#if 0
+
+/*cache.080510: --維修用, 開站時要記得取消這段定義--*/
+#ifdef HAVE_MAINTENANCE_MODE
     sprintf(buf, BBSHOME "/gem/@/@close");
     more(buf, (char *) -1);
     login_abort("\n夢之大地主機搬遷中...");
@@ -1145,7 +1096,6 @@ tn_main(void)
     sleep(10);
     login_abort("\n");
 #endif
-
 
     //負載提到前面取得
     nproc = sysconf(_SC_NPROCESSORS_ONLN);
@@ -1246,10 +1196,6 @@ telnet_init(void)
     /* init telnet protocol                                */
     /* --------------------------------------------------- */
 
-#if 0
-    to.tv_sec = 1;
-    to.tv_usec = 1;
-#endif
     cmd = svr;
 
     for (n = 0; n < 4; n++)
@@ -1478,12 +1424,6 @@ start_daemon(
 
     val = 1;
     setsockopt(n, SOL_SOCKET, SO_REUSEADDR, (char *) &val, sizeof(val));
-
-#if 0
-    setsockopt(n, SOL_SOCKET, SO_KEEPALIVE, (char *) &val, sizeof(val));
-
-    setsockopt(n, IPPROTO_TCP, TCP_NODELAY, (char *) &val, sizeof(val));
-#endif
 
     ld.l_onoff = ld.l_linger = 0;
     setsockopt(n, SOL_SOCKET, SO_LINGER, (char *) &ld, sizeof(ld));
@@ -1769,15 +1709,6 @@ int main(int argc, char *argv[])
 
         dup2(csock, 0);
         close(csock);
-
-#if 0
-        /* Thor.990121: 免得反查時讓人久等 */
-
-        telnet_init();
-
-        sprintf(currtitle, "正進入%s...\n", str_site);
-        send(0, currtitle, strlen(currtitle), 0);
-#endif
 
         /* ------------------------------------------------- */
         /* ident remote host / user name via RFC931          */
